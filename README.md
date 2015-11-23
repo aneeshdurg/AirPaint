@@ -13,4 +13,5 @@ Controls:
 
 *You need to make a brush. Mine is a yellow pen, with a black piece of paper attached to it.
 
+![Brush](http://i.imgur.com/K6bKWJx.jpg "Brush")
 
