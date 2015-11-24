@@ -44,7 +44,7 @@ while not done:
 		color%=(len(colors)-1)
 		brushSize = eraser[2]
 
-	if pygame.key.get_pressed()[pygame.K_b]:
+	if pygame.key.get_pressed()[pygame.K_d]:
 		color = 0
 	if pygame.key.get_pressed()[pygame.K_r]:
 		color = 1
@@ -76,6 +76,9 @@ while not done:
 			eraser[2] = brushSize
 			color = len(colors)-1
 			brushSize = brushSize + 5
+
+	if pygame.key.get_pressed()[pygame.K_s]:
+		pygame.image.save(screen, "Picture.bmp")		
 
 	pygame.display.set_caption("Air Paint Color: "+colorString[color]+", Brush Size: "+str(brushSize))
 	_, frame = cap.read()

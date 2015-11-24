@@ -20,7 +20,7 @@ Controls:
 
   Cycle through colors - Space
   Change to color:	
-  	Black - b
+  	Black - d
   	Red - r
   	Green - g
   	Blue - b
@@ -30,6 +30,8 @@ Controls:
 
   Eraser - e
   
+  Save image - s (saves to Picture.bmp)
+
   Exit - Escape
   
 
