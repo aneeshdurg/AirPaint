@@ -19,13 +19,21 @@ Controls:
   Clear Screen - Backspace
 
   Cycle through colors - Space
+  
   Change to color:	
+  
   	Black - d
+  	
   	Red - r
+  	
   	Green - g
+  	
   	Blue - b
+  	
   	Yellow - y
+  	
   	Purple - p
+  	
   	Turquoise - t
 
   Eraser - e
