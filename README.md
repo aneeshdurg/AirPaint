@@ -7,7 +7,7 @@ Controls:
   Brush - your "brush" (*)
   Clear Screen - Backspace
   Change colors - Space
-  Eraser - Tab
+  Eraser - c
   Exit - Escape
   
 
