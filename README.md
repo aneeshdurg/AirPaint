@@ -13,12 +13,16 @@ Controls:
   Brush - your "brush" (*)
   
   Increase brush size - up
+  
   Decrease brush size - down
+  
   Reset brush size - left or right
 
   Clear Screen - Backspace
 
   Cycle through colors - Space
+  
+  Disco mode - Tab
   
   Change to color:	
   
