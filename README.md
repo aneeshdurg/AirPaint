@@ -52,7 +52,7 @@ Controls:
   
   Save image - s (saves to Picture.bmp)
 
-  Exit - Escape
+  Exit - Escape 
   
 
 *You need to make the brush. Mine is a yellow pen, with a black piece of paper attached to it.

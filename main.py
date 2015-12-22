@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import pygame
 import sys
+import AirBrush
 
 printpts = False
 show = False
@@ -33,6 +34,7 @@ rainbow = False
 draw = False
 
 cap = cv2.VideoCapture(0)
+brush = AirBrush.brush(cap)
 x, y=0, 0
 
 while not done:
@@ -124,41 +126,21 @@ while not done:
 
 
 	pygame.display.set_caption("Air Paint Color: "+colorString[color]+", Brush Size: "+str(brushSize))
-	_, frame = cap.read()
-	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-	lower = np.array([20,20,20])
-	upper = np.array([45,255,255])
-	mask = cv2.inRange(hsv, lower, upper)
-	res = cv2.bitwise_and(frame,frame, mask= mask)
-	params = cv2.SimpleBlobDetector_Params()
-	params.filterByArea = 1
-	params.minArea = 100
-	params.filterByColor = 1
-	params.blobColor = 0
-	detector = cv2.SimpleBlobDetector(params)
-	keypoints = detector.detect(res)
-	if show:	
-		im_with_keypoints = cv2.drawKeypoints(frame, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-		cv2.imshow("Keypoints", im_with_keypoints)
-
-	
-	for kpt in keypoints:
-		if printpts:
-			print str(kpt.pt[0])+" "+str(kpt.pt[1])
-		x =int(keypoints[0].pt[0])
-		y =int(keypoints[0].pt[1])
+	x, y, found = brush.getPos(show, printpts)
 
 	x = 1920 - 3*x
 	y = 2*y
 
-	try:
-		pygame.mouse.set_pos([x, y])
-	except TypeError:
-		pass
-
-	if draw:
+	if found:
 		try:
-			pygame.draw.circle(screen, colors[color], [x, y], brushSize)
-		except:
+			pygame.mouse.set_pos([x, y])
+		except TypeError:
 			pass
+	
+		if draw:
+			try:
+				pygame.draw.circle(screen, colors[color], [x, y], brushSize)
+			except:
+				pass
+	
 	pygame.display.flip()
