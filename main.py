@@ -1,11 +1,26 @@
 import cv2
 import numpy as np
 import pygame
+import sys
+
+printpts = False
+show = False
+for i in range(1, len(sys.argv)):
+	arg = sys.argv[i]
+	if arg == '-a':
+		printpts = True
+		show = True
+		break
+	elif arg == '-p':
+		printpts = True
+	elif arg == '-v':
+		show = True	
 
 pygame.init()
 SIZE = [1920, 1080]
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Air Paint")
+pygame.mouse.set_cursor(*pygame.cursors.diamond)
 screen.fill((255, 255, 255))
 done=False
 
@@ -14,6 +29,8 @@ colorString = ["Black", "Red", "Green", "Blue", "Yellow", "Purple", "Turquoise",
 color=0
 brushSize = 5
 eraser = [False, 0, 5]
+rainbow = False
+draw = False
 
 cap = cv2.VideoCapture(0)
 x, y=0, 0
@@ -28,6 +45,7 @@ while not done:
 	if pygame.key.get_pressed()[pygame.K_UP]:
 		eraser[2]+=1
 		brushSize = eraser[2]
+		
 
 	if pygame.key.get_pressed()[pygame.K_DOWN]:
 		eraser[2]-=1
@@ -35,36 +53,54 @@ while not done:
 			eraser[2] = 0
 		brushSize = eraser[2]
 		
+		
 	if pygame.key.get_pressed()[pygame.K_LEFT] or pygame.key.get_pressed()[pygame.K_RIGHT]:
 		eraser[2]=5	
 		brushSize = eraser[2]
+		rainbow=False
 
 	if pygame.key.get_pressed()[pygame.K_SPACE]:
 		color+=1
 		color%=(len(colors)-1)
 		brushSize = eraser[2]
+		rainbow=False
 
+	if pygame.key.get_pressed()[pygame.K_RETURN]:
+		draw = not draw
+		pygame.mouse.set_visible(not draw)
+	
 	if pygame.key.get_pressed()[pygame.K_d]:
 		color = 0
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_r]:
 		color = 1
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_g]:
 		color = 2
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_b]:
 		color = 3
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_y]:
 		color = 4
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_p]:
 		color = 5
+		rainbow=False
 	if pygame.key.get_pressed()[pygame.K_t]:
 		color = 6
+		rainbow=False
+	if pygame.key.get_pressed()[pygame.K_TAB]:
+		rainbow=True	
 
 	if pygame.key.get_pressed()[pygame.K_BACKSPACE]:
 		screen.fill((255, 255, 255))
 		eraser[2] = 5
 		brushSize = eraser[2]
+		rainbow=False
 
 	if pygame.key.get_pressed()[pygame.K_e]:
+		rainbow=False
 		if eraser[0]:
 			eraser[0] = False
 			color = eraser[1]
@@ -78,7 +114,14 @@ while not done:
 			brushSize = brushSize + 5
 
 	if pygame.key.get_pressed()[pygame.K_s]:
-		pygame.image.save(screen, "Picture.bmp")		
+		pygame.mouse.set_visible(False)
+		pygame.image.save(screen, "Picture.bmp")
+		pygame.mouse.set_visible(not draw)	
+
+	if rainbow:
+		color+=1
+		color%=6		
+
 
 	pygame.display.set_caption("Air Paint Color: "+colorString[color]+", Brush Size: "+str(brushSize))
 	_, frame = cap.read()
@@ -94,13 +137,28 @@ while not done:
 	params.blobColor = 0
 	detector = cv2.SimpleBlobDetector(params)
 	keypoints = detector.detect(res)
-	#im_with_keypoints = cv2.drawKeypoints(frame, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-	#cv2.imshow("Keypoints", im_with_keypoints)
+	if show:	
+		im_with_keypoints = cv2.drawKeypoints(frame, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+		cv2.imshow("Keypoints", im_with_keypoints)
 
+	
 	for kpt in keypoints:
-		print str(kpt.pt[0])+" "+str(kpt.pt[1])
+		if printpts:
+			print str(kpt.pt[0])+" "+str(kpt.pt[1])
 		x =int(keypoints[0].pt[0])
 		y =int(keypoints[0].pt[1])
 
-	pygame.draw.circle(screen, colors[color], [1920 - 3*x, 2*y], brushSize)
+	x = 1920 - 3*x
+	y = 2*y
+
+	try:
+		pygame.mouse.set_pos([x, y])
+	except TypeError:
+		pass
+
+	if draw:
+		try:
+			pygame.draw.circle(screen, colors[color], [x, y], brushSize)
+		except:
+			pass
 	pygame.display.flip()
