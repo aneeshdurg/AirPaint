@@ -38,7 +38,7 @@ brush = AirBrush.brush(cap)
 x, y=0, 0
 #main loop
 while not done:
-	#Keyboard inpu
+	#Keyboard input
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 				done = True
