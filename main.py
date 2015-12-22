@@ -3,7 +3,7 @@ import numpy as np
 import pygame
 import sys
 import AirBrush
-
+#Arugments
 printpts = False
 show = False
 for i in range(1, len(sys.argv)):
@@ -16,7 +16,7 @@ for i in range(1, len(sys.argv)):
 		printpts = True
 	elif arg == '-v':
 		show = True	
-
+#pygame vars
 pygame.init()
 SIZE = [1920, 1080]
 screen = pygame.display.set_mode(SIZE)
@@ -24,7 +24,7 @@ pygame.display.set_caption("Air Paint")
 pygame.mouse.set_cursor(*pygame.cursors.diamond)
 screen.fill((255, 255, 255))
 done=False
-
+#color and paint related vars
 colors = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255), (255, 255, 255)]
 colorString = ["Black", "Red", "Green", "Blue", "Yellow", "Purple", "Turquoise", "Eraser"]
 color=0
@@ -32,13 +32,13 @@ brushSize = 5
 eraser = [False, 0, 5]
 rainbow = False
 draw = False
-
+#brush
 cap = cv2.VideoCapture(0)
 brush = AirBrush.brush(cap)
 x, y=0, 0
-
+#main loop
 while not done:
-
+	#Keyboard inpu
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 				done = True
@@ -125,7 +125,8 @@ while not done:
 		color%=6		
 
 
-	pygame.display.set_caption("Air Paint Color: "+colorString[color]+", Brush Size: "+str(brushSize))
+	pygame.display.set_caption("[Air Paint] Color: "+colorString[color]+", Brush Size: "+str(brushSize)+", Lifted: "+str(not draw))
+	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 
 	x = 1920 - 3*x
