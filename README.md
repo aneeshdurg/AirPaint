@@ -19,13 +19,18 @@ Controls:
   Brush - your "brush" (*)
   
   Lift/place brush - Return
+  
   Increase brush size - Up
+  
   Decrease brush size - Down
+  
   Reset brush size - Left or Right
 
   Clear Screen - Backspace
 
   Cycle through colors - Space
+  
+  Disco mode - Tab
   
   Change to color:	
   
