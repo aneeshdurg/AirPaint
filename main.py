@@ -6,16 +6,21 @@ import AirBrush
 #Arugments
 printpts = False
 show = False
+b, g, r = 0, 255, 255
 for i in range(1, len(sys.argv)):
 	arg = sys.argv[i]
 	if arg == '-a':
 		printpts = True
 		show = True
-		break
 	elif arg == '-p':
 		printpts = True
 	elif arg == '-v':
-		show = True	
+		show = True
+	elif arg == '-c':
+		b = int(raw_input("B: "))
+		g = int(raw_input("G: ")) 
+		r = int(raw_input("R: "))
+
 #pygame vars
 pygame.init()
 SIZE = [1920, 1080]
@@ -34,7 +39,7 @@ rainbow = False
 draw = False
 #brush
 cap = cv2.VideoCapture(0)
-brush = AirBrush.brush(cap)
+brush = AirBrush.brush(cap, b, g, r)
 x, y=0, 0
 #main loop
 while not done:

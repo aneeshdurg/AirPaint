@@ -5,8 +5,10 @@ AirPaint.
 
 A paint application that uses openCV and blob detection to replace the paint brush.
 The frames captured from the webcam are first filtered for the color yellow and then
-scanned for dark blobs. To view the keypoints being picked up, run the program with
-the argument '-v'
+scanned for dark blobs. To change the color being filtered, run main.py with the 
+argument '-c' and enter the BGR values for the new color.
+
+To view the keypoints being detected, run main.py with the argument '-v'
   
 By running main.py with the argument '-p', viewing the console while main.py is running 
 will show the coordinate of the brush with respect to your webcam 
