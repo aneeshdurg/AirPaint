@@ -17,6 +17,8 @@ will show the coordinate of the brush with respect to your webcam
 To view the keypoints being picked up and the coordinates of the keypoints, use the 
 argument '-a'
 
+To change the dimensions of the output window, use the argument '-s'
+
 Controls:
   Brush - your "brush" (*)
   

@@ -3,9 +3,11 @@ import numpy as np
 import pygame
 import sys
 import AirBrush
+import os
 #Arugments
 printpts = False
 show = False
+changeDim = False
 b, g, r = 0, 255, 255
 for i in range(1, len(sys.argv)):
 	arg = sys.argv[i]
@@ -20,10 +22,17 @@ for i in range(1, len(sys.argv)):
 		b = int(raw_input("B: "))
 		g = int(raw_input("G: ")) 
 		r = int(raw_input("R: "))
+	elif arg == '-s':
+		changeDim = True
+		w = int(raw_input("Width: "))
+		h = int(raw_input("Height: "))
 
 #pygame vars
 pygame.init()
-SIZE = [1920, 1080]
+SIZE = [800, 640]
+if changeDim:
+	SIZE[0] = w
+	SIZE[1] = h
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Air Paint")
 pygame.mouse.set_cursor(*pygame.cursors.diamond)
@@ -39,7 +48,7 @@ rainbow = False
 draw = False
 #brush
 cap = cv2.VideoCapture(0)
-brush = AirBrush.brush(cap, b, g, r)
+brush = AirBrush.brush(cap=cap, B=b, G=g, R=r)
 x, y=0, 0
 #main loop
 while not done:
@@ -134,8 +143,8 @@ while not done:
 	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 
-	x = 1920 - 3*x
-	y = 2*y
+	x = SIZE[0] - int(SIZE[0]/brush.width)*x
+	y = int(SIZE[1]/brush.height)*y
 
 	if found:
 		try:
