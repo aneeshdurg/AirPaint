@@ -29,15 +29,19 @@ for i in range(1, len(sys.argv)):
 
 #pygame vars
 pygame.init()
+pygame.mouse.set_visible(False)
 SIZE = [800, 640]
 if changeDim:
 	SIZE[0] = w
 	SIZE[1] = h
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Air Paint")
-pygame.mouse.set_cursor(*pygame.cursors.diamond)
-screen.fill((255, 255, 255))
-done=False
+#Canvas for painting, cursor for drawing cursor
+canvas = pygame.Surface(screen.get_size())
+canvas = canvas.convert()
+cursor = pygame.Surface(screen.get_size())
+cursor.set_colorkey((1,1,1))
+canvas.fill((255, 255, 255))
 #color and paint related vars
 colors = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255), (255, 255, 255)]
 colorString = ["Black", "Red", "Green", "Blue", "Yellow", "Purple", "Turquoise", "Eraser"]
@@ -51,7 +55,9 @@ cap = cv2.VideoCapture(0)
 brush = AirBrush.brush(cap=cap, B=b, G=g, R=r)
 x, y=0, 0
 #main loop
+done=False
 while not done:
+	cursor.fill((1, 1, 1))
 	#Keyboard input
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -83,8 +89,7 @@ while not done:
 
 	if pygame.key.get_pressed()[pygame.K_RETURN]:
 		draw = not draw
-		pygame.mouse.set_visible(not draw)
-	
+		
 	if pygame.key.get_pressed()[pygame.K_d]:
 		color = 0
 		rainbow=False
@@ -110,7 +115,7 @@ while not done:
 		rainbow=True	
 
 	if pygame.key.get_pressed()[pygame.K_BACKSPACE]:
-		screen.fill((255, 255, 255))
+		canvas.fill((255, 255, 255))
 		eraser[2] = 5
 		brushSize = eraser[2]
 		rainbow=False
@@ -130,10 +135,8 @@ while not done:
 			brushSize = brushSize + 5
 
 	if pygame.key.get_pressed()[pygame.K_s]:
-		pygame.mouse.set_visible(False)
-		pygame.image.save(screen, "Picture.bmp")
-		pygame.mouse.set_visible(not draw)	
-
+		pygame.image.save(canvas, "Picture.bmp")
+		
 	if rainbow:
 		color+=1
 		color%=6		
@@ -149,13 +152,24 @@ while not done:
 	if found:
 		try:
 			pygame.mouse.set_pos([x, y])
+			#Draw cursor
+			pygame.draw.rect(cursor, colors[color], (x-brushSize, y-brushSize, brushSize, brushSize), 2)
+			pygame.draw.rect(cursor, (255, 255, 255), (x-brushSize+2, y-brushSize+2, brushSize-4, brushSize-4), 2)
 		except TypeError:
 			pass
 	
 		if draw:
 			try:
-				pygame.draw.circle(screen, colors[color], [x, y], brushSize)
+				pygame.draw.circle(canvas, colors[color], [x, y], brushSize)
+				#Draw cursor
+				if color == len(colors)-1:
+					pygame.draw.rect(cursor, (0, 0, 0), (x-brushSize, y-brushSize, brushSize, brushSize), 1)
+					pygame.draw.rect(cursor, (255, 255, 255), (x-brushSize+2, y-brushSize+2, brushSize-4, brushSize-4))
+				else:
+					pygame.draw.rect(cursor, colors[color], (x-brushSize, y-brushSize, brushSize, brushSize))
 			except:
 				pass
-	
+	#Draw cursor on top of canvas
+	screen.blit(canvas, (0, 0))
+	screen.blit(cursor, (0, 0))
 	pygame.display.flip()
