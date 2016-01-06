@@ -4,6 +4,7 @@ import pygame
 import sys
 import AirBrush
 import os
+import math
 #Arugments
 printpts = False
 show = False
@@ -53,6 +54,11 @@ draw = False
 drawLine = False
 line=[None, None]
 tool = 'Brush'
+shape = 'circle'
+drawShape = [False, False]
+shapePts = [None, None]
+r = 0
+rect = []
 #brush
 cap = cv2.VideoCapture(0)
 brush = AirBrush.brush(cap=cap, B=b, G=g, R=r)
@@ -70,6 +76,11 @@ while not done:
 	if pygame.key.get_pressed()[pygame.K_UP]:
 		eraser[2]+=1
 		brushSize = eraser[2]
+	if pygame.key.get_pressed()[pygame.K_SLASH]:
+		if shape == 'circle':
+			shape = 'square'
+		else:
+			shape = 'circle'		
 		
 
 	if pygame.key.get_pressed()[pygame.K_DOWN]:
@@ -148,7 +159,7 @@ while not done:
 		color%=6		
 
 
-	pygame.display.set_caption("[Air Paint] Color: "+colorString[color]+", Brush Size: "+str(brushSize)+", Lifted: "+str(not draw)+", Tool: "+tool)
+	pygame.display.set_caption("[Air Paint] Color: "+colorString[color]+", Brush Size: "+str(brushSize)+", Lifted: "+str(not draw)+", Tool: "+tool+", sClick: "+shape)
 	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 	pClick, sClick = brush.getClicked()
@@ -160,7 +171,19 @@ while not done:
 	x = SIZE[0] - int(SIZE[0]/brush.width)*x
 	y = int(SIZE[1]/brush.height)*y
 	
-	if pClick and draw:
+	if sClick and draw:
+		shapePts[0] = (x, y)
+		drawShape[0] = True
+		tool = shape
+
+	if pClick and drawShape[0] and draw:
+		drawShape[0] = False
+		shapePts[1] = (x, y)
+		shapePts = [None, None]	
+		drawShape[1] = True
+		tool = 'Brush'
+
+	elif pClick and draw:
 		if line[0] == None:
 			line[0] = (x, y)
 			drawLine = True
@@ -181,7 +204,7 @@ while not done:
 		except TypeError:
 			pass
 	
-		if draw and not drawLine:
+		if draw and not drawLine and not drawShape[0] and not drawShape[1]:
 			try:
 				pygame.draw.circle(canvas, colors[color], [x, y], brushSize)
 				#Draw cursor
@@ -192,8 +215,28 @@ while not done:
 					pygame.draw.rect(cursor, colors[color], (x-brushSize, y-brushSize, brushSize, brushSize))
 			except:
 				pass
+
+		if drawShape[1]:
+			if shape == 'circle':
+				r = math.sqrt(math.pow((shape[0][0] - shape[1][0]), 2) + math.pow(shape[1][0] - shape[1][1], 2))
+				pygame.draw.circle(cursor, colors[color], shape[0], r, width = brushSize)
+			else:
+				rect=[shape[0], (shape[0][0], shape[1][0]), shape[1], (shape[1][1], shape[0][1])]
+				pygame.draw.lines(cursor, colors[color], True, rect, brushSize)
+			drawShape[1] = False	
+
 		if drawLine:
-			pygame.draw.lines(cursor, colors[color], False, [line[0], (x, y)], brushSize)		
+			pygame.draw.lines(cursor, colors[color], False, [line[0], (x, y)], brushSize)	
+		
+		if drawShape[0]:
+			if shape == 'circle':
+				r = math.sqrt(math.pow((shape[0][0] - shape[1][0]), 2) + math.pow(shape[1][0] - shape[1][1], 2))
+				pygame.draw.circle(cursor, colors[color], shape[0], r, width = brushSize)
+			else:
+				rect=[shape[0], (shape[0][0], shape[1][0]), shape[1], (shape[1][1], shape[0][1])]
+				pygame.draw.lines(cursor, colors[color], True, rect, brushSize)
+
+					
 	#Draw cursor on top of canvas
 	screen.blit(canvas, (0, 0))
 	screen.blit(cursor, (0, 0))

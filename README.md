@@ -37,6 +37,10 @@ Controls:
   Disco mode - Tab
 
   Draw Line - Hold brush still for 3s to start drawing a line, 3s to stop
+
+  Draw Shape - Hold brush still for 6s to draw a shape, move to another point to set the boundry for the shape and hold still for 3s.
+
+  Change shape - Press / to toggle between square and circle
   
   Change to color:	
   
