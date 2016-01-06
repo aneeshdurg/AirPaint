@@ -148,11 +148,15 @@ while not done:
 	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 	pClick, sClick = brush.getClicked()
+	if printpts and pClick:
+		print 'pClick'
+	if printpts and sClick:
+		print 'sClick'	
 
 	x = SIZE[0] - int(SIZE[0]/brush.width)*x
 	y = int(SIZE[1]/brush.height)*y
 	
-	if pClick:
+	if pClick and draw:
 		if line[0] == None:
 			line[0] = (x, y)
 			drawLine = True
@@ -182,6 +186,8 @@ while not done:
 					pygame.draw.rect(cursor, colors[color], (x-brushSize, y-brushSize, brushSize, brushSize))
 			except:
 				pass
+		if drawLine:
+			pygame.draw.lines(cursor, colors[color], False, [line[0], (x, y)], brushSize)		
 	#Draw cursor on top of canvas
 	screen.blit(canvas, (0, 0))
 	screen.blit(cursor, (0, 0))
