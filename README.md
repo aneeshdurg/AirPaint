@@ -35,6 +35,8 @@ Controls:
   Cycle through colors - Space
   
   Disco mode - Tab
+
+  Draw Line - Hold brush still for 3s to start drawing a line, 3s to stop
   
   Change to color:	
   
