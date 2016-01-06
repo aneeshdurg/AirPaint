@@ -47,11 +47,12 @@ colors = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255,
 colorString = ["Black", "Red", "Green", "Blue", "Yellow", "Purple", "Turquoise", "Eraser"]
 color=0
 brushSize = 5
-eraser = [False, 0, 5]
+eraser = [False, 0, 5, 'Brush']
 rainbow = False
 draw = False
 drawLine = False
 line=[None, None]
+tool = 'Brush'
 #brush
 cap = cv2.VideoCapture(0)
 brush = AirBrush.brush(cap=cap, B=b, G=g, R=r)
@@ -128,11 +129,14 @@ while not done:
 			eraser[0] = False
 			color = eraser[1]
 			brushSize = eraser[2]
+			tool = eraser[3]
 
 		else:
 			eraser[0] = True
 			eraser[1] = color
 			eraser[2] = brushSize
+			eraser[3] = tool
+			tool = 'Eraser'
 			color = len(colors)-1
 			brushSize = brushSize + 5
 
@@ -144,7 +148,7 @@ while not done:
 		color%=6		
 
 
-	pygame.display.set_caption("[Air Paint] Color: "+colorString[color]+", Brush Size: "+str(brushSize)+", Lifted: "+str(not draw))
+	pygame.display.set_caption("[Air Paint] Color: "+colorString[color]+", Brush Size: "+str(brushSize)+", Lifted: "+str(not draw)+", Tool: "+tool)
 	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 	pClick, sClick = brush.getClicked()
@@ -160,11 +164,13 @@ while not done:
 		if line[0] == None:
 			line[0] = (x, y)
 			drawLine = True
+			tool = 'Line'
 		else:
 			line[1] = (x, y)
 			pygame.draw.lines(canvas, colors[color], False, line, brushSize)
 			line = [None, None]	
 			drawLine = False
+			tool = 'Brush'
 
 	if found:
 		try:
