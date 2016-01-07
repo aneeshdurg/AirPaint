@@ -57,7 +57,7 @@ tool = 'Brush'
 shape = 'circle'
 drawShape = [False, False]
 shapePts = [None, None]
-r = 0
+radius = 0
 rect = []
 #brush
 cap = cv2.VideoCapture(0)
@@ -163,15 +163,17 @@ while not done:
 	#Get position of brush
 	x, y, found = brush.getPos(show, printpts)
 	pClick, sClick = brush.getClicked()
-	if printpts and pClick:
-		print 'pClick'
-	if printpts and sClick:
-		print 'sClick'	
+	if printpts:
+		if pClick:
+			print 'pClick'
+		if sClick:
+			print 'sClick'	
 
 	x = SIZE[0] - int(SIZE[0]/brush.width)*x
 	y = int(SIZE[1]/brush.height)*y
 	
 	if sClick and draw:
+		drawLine = False
 		shapePts[0] = (x, y)
 		drawShape[0] = True
 		tool = shape
@@ -179,7 +181,6 @@ while not done:
 	if pClick and drawShape[0] and draw:
 		drawShape[0] = False
 		shapePts[1] = (x, y)
-		shapePts = [None, None]	
 		drawShape[1] = True
 		tool = 'Brush'
 
@@ -218,11 +219,13 @@ while not done:
 
 		if drawShape[1]:
 			if shape == 'circle':
-				r = math.sqrt(math.pow((shape[0][0] - shape[1][0]), 2) + math.pow(shape[1][0] - shape[1][1], 2))
-				pygame.draw.circle(cursor, colors[color], shape[0], r, width = brushSize)
+				radius = int(math.sqrt(math.pow((shapePts[0][0] - shapePts[1][0]), 2) + math.pow(shapePts[0][1] - shapePts[1][1], 2)))
+				if radius>brushSize:
+					pygame.draw.circle(canvas, colors[color], shapePts[0], radius, brushSize)
 			else:
-				rect=[shape[0], (shape[0][0], shape[1][0]), shape[1], (shape[1][1], shape[0][1])]
-				pygame.draw.lines(cursor, colors[color], True, rect, brushSize)
+				rect=[shapePts[0], (shapePts[0][0], shapePts[1][1]), shapePts[1], (shapePts[1][0], shapePts[0][1])]
+				pygame.draw.lines(canvas, colors[color], True, rect, brushSize)
+			shapePts = [None, None]	
 			drawShape[1] = False	
 
 		if drawLine:
@@ -230,10 +233,11 @@ while not done:
 		
 		if drawShape[0]:
 			if shape == 'circle':
-				r = math.sqrt(math.pow((shape[0][0] - shape[1][0]), 2) + math.pow(shape[1][0] - shape[1][1], 2))
-				pygame.draw.circle(cursor, colors[color], shape[0], r, width = brushSize)
+				radius = int(math.sqrt(math.pow((shapePts[0][0] - x), 2) + math.pow(shapePts[0][1] - y, 2)))
+				if radius>brushSize:
+					pygame.draw.circle(cursor, colors[color], shapePts[0], radius, brushSize)
 			else:
-				rect=[shape[0], (shape[0][0], shape[1][0]), shape[1], (shape[1][1], shape[0][1])]
+				rect=[shapePts[0], (shapePts[0][0], y), (x, y), (x, shapePts[0][1])]
 				pygame.draw.lines(cursor, colors[color], True, rect, brushSize)
 
 					
